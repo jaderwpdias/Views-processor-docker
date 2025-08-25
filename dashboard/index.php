@@ -20,68 +20,290 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --border-radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark-color);
+            overflow-x: hidden;
+        }
+
+        /* Navbar Moderna */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-nav .btn {
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-nav .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Cards Modernos */
         .dashboard-card {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
         .dashboard-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg);
         }
+
+        /* Métricas */
+        .metric-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
         .metric-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #2c3e50;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1;
         }
+
         .metric-label {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.05em;
         }
+
+        .metric-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            color: var(--primary-color);
+        }
+
+        /* Progress Bars Modernas */
         .progress-custom {
-            height: 8px;
-            border-radius: 10px;
-            background: #ecf0f1;
-        }
-        .progress-custom .progress-bar {
-            border-radius: 10px;
-            transition: width 0.6s ease;
-        }
-        .status-indicator {
-            width: 12px;
             height: 12px;
+            border-radius: 20px;
+            background: #e5e7eb;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-custom .progress-bar {
+            border-radius: 20px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        }
+
+        .progress-custom .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 8px;
-        }
-        .status-ok { background-color: #27ae60; }
-        .status-warning { background-color: #f39c12; }
-        .status-critical { background-color: #e74c3c; }
-        .chart-container {
+            margin-right: 0.75rem;
             position: relative;
-            height: 300px;
-            margin: 20px 0;
         }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-        .real-time-indicator {
+
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.3;
             animation: pulse 2s infinite;
         }
+
+        .status-ok { 
+            background-color: var(--success-color);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .status-warning { 
+            background-color: var(--warning-color);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .status-critical { 
+            background-color: var(--danger-color);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        /* Real-time Indicator */
+        .real-time-indicator {
+            animation: pulse 2s infinite;
+            color: var(--success-color);
+        }
+
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .metric-value {
+                font-size: 2rem;
+            }
+            
+            .dashboard-card {
+                margin-bottom: 1rem;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* Animações de entrada */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+
+        /* Loading states */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
     </style>
 </head>
@@ -114,14 +336,14 @@ try {
         <!-- Métricas Principais -->
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
-                <div class="dashboard-card p-4 text-center">
-                    <i class="fas fa-microchip fa-3x text-primary mb-3"></i>
+                <div class="dashboard-card metric-card fade-in">
+                    <i class="fas fa-microchip metric-icon"></i>
                     <div class="metric-value" id="cpu-usage">
                         <?= $latestMetrics ? number_format($latestMetrics['cpu_usage'], 1) : '0' ?>%
                     </div>
                     <div class="metric-label">CPU</div>
-                    <div class="progress progress-custom mt-2">
-                        <div class="progress-bar bg-primary" id="cpu-progress" 
+                    <div class="progress-custom mt-3">
+                        <div class="progress-bar" id="cpu-progress" 
                              style="width: <?= $latestMetrics ? $latestMetrics['cpu_usage'] : 0 ?>%"></div>
                     </div>
                     <small class="text-muted mt-2 d-block">
@@ -132,14 +354,14 @@ try {
             </div>
 
             <div class="col-md-3 mb-3">
-                <div class="dashboard-card p-4 text-center">
-                    <i class="fas fa-memory fa-3x text-success mb-3"></i>
+                <div class="dashboard-card metric-card fade-in">
+                    <i class="fas fa-memory metric-icon"></i>
                     <div class="metric-value" id="memory-usage">
                         <?= $latestMetrics ? number_format($latestMetrics['memory_usage'], 1) : '0' ?>%
                     </div>
                     <div class="metric-label">Memória</div>
-                    <div class="progress progress-custom mt-2">
-                        <div class="progress-bar bg-success" id="memory-progress" 
+                    <div class="progress-custom mt-3">
+                        <div class="progress-bar" id="memory-progress" 
                              style="width: <?= $latestMetrics ? $latestMetrics['memory_usage'] : 0 ?>%"></div>
                     </div>
                     <small class="text-muted mt-2 d-block">
@@ -150,14 +372,14 @@ try {
             </div>
 
             <div class="col-md-3 mb-3">
-                <div class="dashboard-card p-4 text-center">
-                    <i class="fas fa-hdd fa-3x text-warning mb-3"></i>
+                <div class="dashboard-card metric-card fade-in">
+                    <i class="fas fa-hdd metric-icon"></i>
                     <div class="metric-value" id="disk-usage">
                         <?= $latestMetrics ? $latestMetrics['disk_usage'] : 0 ?>%
                     </div>
                     <div class="metric-label">Disco</div>
-                    <div class="progress progress-custom mt-2">
-                        <div class="progress-bar bg-warning" id="disk-progress" 
+                    <div class="progress-custom mt-3">
+                        <div class="progress-bar" id="disk-progress" 
                              style="width: <?= $latestMetrics ? $latestMetrics['disk_usage'] : 0 ?>%"></div>
                     </div>
                     <small class="text-muted mt-2 d-block">
@@ -168,8 +390,8 @@ try {
             </div>
 
             <div class="col-md-3 mb-3">
-                <div class="dashboard-card p-4 text-center">
-                    <i class="fas fa-network-wired fa-3x text-info mb-3"></i>
+                <div class="dashboard-card metric-card fade-in">
+                    <i class="fas fa-network-wired metric-icon"></i>
                     <div class="metric-value" id="network-usage">
                         <?= $latestMetrics ? number_format($latestMetrics['network_rx_mb'], 1) : '0' ?>
                     </div>
