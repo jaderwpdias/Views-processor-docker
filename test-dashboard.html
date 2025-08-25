@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Gráfico</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .chart-container { height: 400px; margin: 20px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste do Gráfico IoT Dashboard</h1>
+        
+        <div id="status" class="status">
+            <strong>Status:</strong> <span id="status-text">Carregando...</span>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="testChart"></canvas>
+        </div>
+        
+        <div id="api-status" class="status">
+            <strong>API Status:</strong> <span id="api-text">Testando...</span>
+        </div>
+        
+        <div id="data-display">
+            <h3>Dados da API:</h3>
+            <pre id="api-data">Carregando...</pre>
+        </div>
+    </div>
+
+    <script src="http://localhost:8080/assets/js/lib/chart.min.js"></script>
+    <script>
+        console.log('🔍 Iniciando teste do gráfico...');
+        
+        // Verificar se Chart.js foi carregado
+        if (typeof Chart !== 'undefined') {
+            document.getElementById('status-text').textContent = 'Chart.js carregado com sucesso!';
+            document.getElementById('status').className = 'status success';
+            console.log('✅ Chart.js carregado');
+        } else {
+            document.getElementById('status-text').textContent = 'Erro: Chart.js não carregado';
+            document.getElementById('status').className = 'status error';
+            console.error('❌ Chart.js não carregado');
+        }
+        
+        // Testar API
+        async function testAPI() {
+            try {
+                console.log('🔄 Testando API...');
+                const response = await fetch('http://localhost:8080/api/metrics.php?action=chart&limit=10');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('api-text').textContent = 'API funcionando!';
+                    document.getElementById('api-status').className = 'status success';
+                    document.getElementById('api-data').textContent = JSON.stringify(data, null, 2);
+                    console.log('✅ API funcionando:', data);
+                    
+                    // Criar gráfico de teste
+                    createTestChart(data.data);
+                } else {
+                    document.getElementById('api-text').textContent = 'Erro na API';
+                    document.getElementById('api-status').className = 'status error';
+                    console.error('❌ Erro na API:', data);
+                }
+            } catch (error) {
+                document.getElementById('api-text').textContent = 'Erro de conexão: ' + error.message;
+                document.getElementById('api-status').className = 'status error';
+                console.error('❌ Erro de conexão:', error);
+            }
+        }
+        
+        function createTestChart(data) {
+            if (!data || data.length === 0) {
+                console.warn('⚠️ Nenhum dado para o gráfico');
+                return;
+            }
+            
+            console.log('📊 Criando gráfico com', data.length, 'pontos');
+            
+            const labels = data.map(item => new Date(item.timestamp * 1000).toLocaleTimeString('pt-BR'));
+            const cpuData = data.map(item => parseFloat(item.cpu_usage));
+            const memoryData = data.map(item => parseFloat(item.memory_usage));
+            
+            const ctx = document.getElementById('testChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'CPU (%)',
+                            data: cpuData,
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Memória (%)',
+                            data: memoryData,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Teste do Gráfico IoT Dashboard'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            console.log('✅ Gráfico criado com sucesso');
+        }
+        
+        // Executar teste
+        testAPI();
+    </script>
+</body>
+</html>

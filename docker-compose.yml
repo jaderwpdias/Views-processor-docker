@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Serviço PHP para coleta de métricas
+  iot-collector:
+    build: ./collector
+    container_name: iot-collector
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/host:ro
+    environment:
+      - DB_HOST=iot-db
+      - DB_NAME=iot_metrics
+      - DB_USER=iot_user
+      - DB_PASS=iot_password
+      - HOST_ROOT=/host
+    depends_on:
+      - iot-db
+    restart: unless-stopped
+
+  # Dashboard web
+  iot-dashboard:
+    build: ./dashboard
+    container_name: iot-dashboard
+    ports:
+      - "8080:80"
+    volumes:
+      - ./dashboard:/var/www/html
+    environment:
+      - DB_HOST=iot-db
+      - DB_NAME=iot_metrics
+      - DB_USER=iot_user
+      - DB_PASS=iot_password
+    depends_on:
+      - iot-db
+    restart: unless-stopped
+
+  # Banco de dados MySQL
+  iot-db:
+    image: mysql:8.0
+    container_name: iot-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: iot_metrics
+      MYSQL_USER: iot_user
+      MYSQL_PASSWORD: iot_password
+    volumes:
+      - iot_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+
+  # Redis para cache e comunicação em tempo real
+  iot-redis:
+    image: redis:7-alpine
+    container_name: iot-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  iot_data:

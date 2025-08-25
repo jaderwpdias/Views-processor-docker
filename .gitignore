@@ -1,0 +1,51 @@
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependências
+vendor/
+node_modules/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.production
+
+# Arquivos de cache
+*.cache
+
+# Arquivos de backup
+*.bak
+*.backup
+
+# Arquivos de teste
+test-*.php
+debug-*.html
+
+# Arquivos de build
+dist/
+build/
+
+# Arquivos de Docker
+.dockerignore
+
+# Arquivos de banco de dados
+*.sql
+*.db
+
+# Arquivos de configuração local
+config.local.php
